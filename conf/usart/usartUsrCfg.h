@@ -113,8 +113,10 @@
 	
 */
 /**************************************************************************/
-#define USART_CRCCHECK				1
 
+#ifndef USART_CRCCHECK_INSKETCH
+#define USART_CRCCHECK				1
+#endif
 /**************************************************************************/
 /*!
 	If enabled print the header and payload of incoming, outgoing and routed
