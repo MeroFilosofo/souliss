@@ -164,25 +164,30 @@ void Souliss_SetIPAddress(U8* ip_address, U8* subnet_mask, U8* ip_gateway)
 
 	#if((MCU_TYPE == 0x02) || (MCU_TYPE == 0x03))	// Expressif ESP8266 or ESP32
 		U8 timeout=20;
-	
-		// If is the first time that we connect to WiFi.SSID
-		if(strcmp(WiFi.SSID().c_str(), WiFi_SSID) || strcmp(WiFi.psk().c_str(), WiFi_Password))
-		{
-			WiFi.mode(WIFI_STA);
-			WiFi.begin(WiFi_SSID, WiFi_Password);
-		}
-		else
-			WiFi.begin();	// WiFi.SSID is a known network, no need to specify it
+		
+		WiFi.setAutoConnect(false);
+		WiFi.disconnect();
+
+		
+		WiFi.persistent(false);
+		WiFi.mode(WIFI_OFF);
+		WiFi.mode(WIFI_STA);
+
+		WiFi.config(ip_address, ip_gateway, subnet_mask);
+		WiFi.begin(WiFi_SSID, WiFi_Password);
+		
 		
 		// Connect
 		while ((WiFi.status() != WL_CONNECTED) && timeout)
 		{
 			timeout--;
-			delay(500);
+			for (int i = 0; i < 500; i++) {
+			  delay(1);
+			}
 		}
-
-		// Set manually an IP address
-		WiFi.config(ip_address, ip_gateway, subnet_mask);
+		if (timeout <=0) {
+			ESP.restart();
+		}
 
 	#endif
 	
